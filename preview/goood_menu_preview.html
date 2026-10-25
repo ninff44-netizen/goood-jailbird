@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>GOOOD — aperçu du menu</title>
+<style>
+  :root{
+    --bg:#0c0c10;
+    --panel:#12121 8;
+    --panel:#121218;
+    --row:#191921;
+    --rowalt:#1e1e28;
+    --off:#30303c;
+    --accent:#ff2d55;
+    --text:#eeeef5;
+    --dim:#9494a4;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:radial-gradient(1200px 600px at 50% 0%, #1a1a24 0%, #07070a 70%);
+    font-family:"Gotham","Segoe UI",Roboto,system-ui,sans-serif;
+    color:var(--text);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    padding:32px;
+  }
+
+  .menu{
+    width:560px;
+    height:400px;
+    background:var(--bg);
+    border-radius:10px;
+    box-shadow:0 0 0 1px rgba(255,45,85,.55), 0 24px 70px rgba(0,0,0,.75), 0 0 60px rgba(255,45,85,.10);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    user-select:none;
+  }
+
+  /* header */
+  .header{
+    height:38px;
+    flex:0 0 38px;
+    position:relative;
+    background:
+      linear-gradient(90deg, rgba(255,45,85,.42) 0%, rgba(255,45,85,.06) 45%, rgba(18,18,24,0) 70%),
+      var(--panel);
+    display:flex;
+    align-items:center;
+    padding:0 12px;
+  }
+  .title{
+    font-size:13px;
+    font-weight:900;
+    letter-spacing:.3px;
+  }
+  .title span{color:var(--accent)}
+  .close{
+    position:absolute;
+    right:8px; top:8px;
+    width:22px; height:22px;
+    border:0;
+    border-radius:5px;
+    background:var(--row);
+    color:var(--dim);
+    font-weight:700;
+    font-size:12px;
+    cursor:pointer;
+    line-height:1;
+  }
+  .close:hover{background:var(--accent);color:#fff}
+
+  /* body */
+  .body{
+    flex:1;
+    display:flex;
+    gap:8px;
+    padding:8px;
+    min-height:0;
+  }
+
+  .sidebar{
+    width:116px;
+    flex:0 0 116px;
+    background:var(--panel);
+    border-radius:8px;
+    padding:6px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .tab{
+    height:30px;
+    border:0;
+    border-radius:5px;
+    background:transparent;
+    color:var(--dim);
+    font:inherit;
+    font-size:12px;
+    font-weight:700;
+    text-align:left;
+    padding:0 10px;
+    cursor:pointer;
+    transition:.12s;
+  }
+  .tab:hover{background:var(--row);color:var(--text)}
+  .tab.active{background:var(--rowalt);color:var(--text);box-shadow:inset 2px 0 0 var(--accent)}
+
+  .content{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+
+  .search{
+    height:26px;
+    flex:0 0 26px;
+    border:0;
+    border-radius:6px;
+    background:var(--panel);
+    color:var(--text);
+    font:inherit;
+    font-size:12px;
+    padding:0 10px;
+    outline:none;
+  }
+  .search::placeholder{color:var(--dim)}
+  .search:focus{box-shadow:0 0 0 1px rgba(255,45,85,.55)}
+
+  .panes{
+    flex:1;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding-right:4px;
+    scrollbar-width:thin;
+    scrollbar-color:var(--accent) transparent;
+  }
+  .pane{display:none;flex-direction:column;gap:6px}
+  .pane.active{display:flex}
+
+  .row{
+    min-height:30px;
+    background:var(--row);
+    border-radius:5px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 8px;
+    gap:10px;
+    font-size:12px;
+    font-weight:500;
+  }
+  .row.slider{flex-direction:column;align-items:stretch;justify-content:center;gap:0;height:42px;padding:4px 8px}
+  .row .label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row.slider .top{display:flex;justify-content:space-between;align-items:center;height:16px}
+  .row.slider .value{color:var(--accent);font-weight:700;font-size:11px}
+
+  /* toggle */
+  .toggle{
+    width:40px;height:20px;
+    flex:0 0 40px;
+    border:0;border-radius:10px;
+    background:var(--off);
+    position:relative;
+    cursor:pointer;
+    transition:background .12s;
+  }
+  .toggle::after{
+    content:"";
+    position:absolute;
+    top:2px;left:2px;
+    width:16px;height:16px;
+    border-radius:8px;
+    background:#f2f2f8;
+    transition:left .12s;
+  }
+  .toggle.on{background:var(--accent)}
+  .toggle.on::after{left:22px}
+
+  /* slider */
+  .bar{
+    height:6px;
+    border-radius:3px;
+    background:var(--off);
+    position:relative;
+    cursor:pointer;
+    margin-top:4px;
+  }
+  .fill{
+    position:absolute;inset:0 auto 0 0;
+    width:0%;
+    border-radius:3px;
+    background:var(--accent);
+  }
+
+  /* cycle + text */
+  .cycle{
+    width:120px;height:20px;
+    border:0;border-radius:4px;
+    background:var(--off);
+    color:var(--text);
+    font:inherit;font-size:11px;font-weight:700;
+    cursor:pointer;
+  }
+  .cycle:hover{background:#3a3a48}
+  .textbox{
+    width:150px;height:20px;
+    border:0;border-radius:4px;
+    background:var(--off);
+    color:var(--text);
+    font:inherit;font-size:11px;
+    padding:0 6px;
+    outline:none;
+  }
+  .textbox::placeholder{color:var(--dim)}
+
+  .action{
+    height:30px;
+    width:100%;
+    border:0;border-radius:5px;
+    background:var(--rowalt);
+    color:var(--text);
+    font:inherit;font-size:12px;font-weight:700;
+    cursor:pointer;
+  }
+  .action:hover{background:var(--accent);color:#fff}
+  .action.danger:hover{background:#ff2d55}
+
+  .caption{
+    color:var(--dim);
+    font-size:12px;
+    text-align:center;
+    max-width:560px;
+    line-height:1.6;
+  }
+  .caption b{color:var(--text)}
+  .caption code{color:var(--accent);font-family:Consolas,monospace}
+</style>
+</head>
+<body>
+
+<div class="menu" id="menu">
+  <div class="header">
+    <div class="title">GOOOD <span>BY DISCORD.GG/GOOOD</span></div>
+    <button class="close" id="close" title="fermer">x</button>
+  </div>
+
+  <div class="body">
+    <aside class="sidebar">
+      <button class="tab active" data-tab="Combat">Combat</button>
+      <button class="tab" data-tab="Visuals">Visuals</button>
+      <button class="tab" data-tab="Player">Player</button>
+      <button class="tab" data-tab="Setup">Setup</button>
+    </aside>
+
+    <section class="content">
+      <input class="search" id="search" placeholder="search...">
+
+      <div class="panes" id="panes">
+
+        <div class="pane active" data-pane="Combat">
+          <div class="row"><span class="label">Aimbot</span><button class="toggle"></button></div>
+          <div class="row"><span class="label">Aim mode</span><button class="cycle" data-options="Hold M2|Always">Hold M2</button></div>
+          <div class="row slider" data-min="10" data-max="600" data-value="140" data-decimals="0">
+            <div class="top"><span class="label">Aim FOV</span><span class="value">140</span></div>
+            <div class="bar"><div class="fill"></div></div>
+          </div>
+          <div class="row slider" data-min="1" data-max="30" data-value="6" data-decimals="1">
+            <div class="top"><span class="label">Smoothing</span><span class="value">6.0</span></div>
+            <div class="bar"><div class="fill"></div></div>
+          </div>
+          <div class="row"><span class="label">Target part</span><button class="cycle" data-options="Head|HumanoidRootPart">Head</button></div>
+          <div class="row"><span class="label">Wall check</span><button class="toggle on"></button></div>
+          <div class="row"><span class="label">Team check</span><button class="toggle on"></button></div>
+          <div class="row"><span class="label">Silent aim</span><button class="toggle"></button></div>
+          <div class="row slider" data-min="10" data-max="800" data-value="160" data-decimals="0">
+            <div class="top"><span class="label">Silent FOV</span><span class="value">160</span></div>
+            <div class="bar"><div class="fill"></div></div>
+          </div>
+          <div class="row"><span class="label">Silent mode</span><button class="cycle" data-options="Camera|Remote">Camera</button></div>
+          <div class="row"><span class="label">Remote name</span><input class="textbox" placeholder="exact remote name"></div>
+        </div>
+
+        <div class="pane" data-pane="Visuals">
+          <div class="row"><span class="label">ESP</span><button class="toggle"></button></div>
+          <div class="row"><span class="label">Show box</span><button class="toggle on"></button></div>
+          <div class="row"><span class="label">Show name</span><button class="toggle on"></button></div>
+          <div class="row"><span class="label">Show health</span><button class="toggle on"></button></div>
+          <div class="row"><span class="label">Show distance</span><button class="toggle on"></button></div>
+          <div class="row"><span class="label">Show tracer</span><button class="toggle"></button></div>
+          <div class="row"><span class="label">Team check</span><button class="toggle on"></button></div>
+          <div class="row slider" data-min="100" data-max="5000" data-value="1500" data-decimals="0">
+            <div class="top"><span class="label">Max distance</span><span class="value">1500</span></div>
+            <div class="bar"><div class="fill"></div></div>
+          </div>
+          <div class="row slider" data-min="8" data-max="24" data-value="13" data-decimals="0">
+            <div class="top"><span class="label">Text size</span><span class="value">13</span></div>
+            <div class="bar"><div class="fill"></div></div>
+          </div>
+        </div>
+
+        <div class="pane" data-pane="Player">
+          <div class="row slider" data-min="16" data-max="200" data-value="16" data-decimals="0">
+            <div class="top"><span class="label">Walk speed</span><span class="value">16</span></div>
+            <div class="bar"><div class="fill"></div></div>
+          </div>
+          <div class="row slider" data-min="50" data-max="250" data-value="50" data-decimals="0">
+            <div class="top"><span class="label">Jump power</span><span class="value">50</span></div>
+            <div class="bar"><div class="fill"></div></div>
+          </div>
+          <div class="row"><span class="label">Infinite jump</span><button class="toggle"></button></div>
+          <div class="row"><span class="label">Hitbox expander</span><button class="toggle"></button></div>
+          <div class="row slider" data-min="1" data-max="10" data-value="3" data-decimals="1">
+            <div class="top"><span class="label">Hitbox size</span><span class="value">3.0</span></div>
+            <div class="bar"><div class="fill"></div></div>
+          </div>
+        </div>
+
+        <div class="pane" data-pane="Setup">
+          <div class="row"><span class="label">Header image</span><input class="textbox" placeholder="rbxassetid://..."></div>
+          <button class="action">Save config</button>
+          <button class="action">Load config</button>
+          <button class="action danger">Unload</button>
+        </div>
+
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="caption">
+  Aperçu 1:1 du <b>ScreenGui</b> livré dans le script Luau — mêmes tailles, mêmes couleurs, mêmes contrôles.<br>
+  Clique les onglets, tape dans <code>search...</code> pour filtrer, tire les sliders, bascule les pills.
+</div>
+
+<script>
+  // tabs
+  const tabs = document.querySelectorAll('.tab');
+  const panes = document.querySelectorAll('.pane');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.toggle('active', x === t));
+    panes.forEach(p => p.classList.toggle('active', p.dataset.pane === t.dataset.tab));
+    filter();
+  }));
+
+  // toggles
+  document.querySelectorAll('.toggle').forEach(t => {
+    t.addEventListener('click', () => t.classList.toggle('on'));
+  });
+
+  // cycles
+  document.querySelectorAll('.cycle').forEach(c => {
+    const opts = c.dataset.options.split('|');
+    let i = 0;
+    c.addEventListener('click', () => {
+      i = (i + 1) % opts.length;
+      c.textContent = opts[i];
+    });
+  });
+
+  // sliders
+  document.querySelectorAll('.row.slider').forEach(row => {
+    const min = parseFloat(row.dataset.min);
+    const max = parseFloat(row.dataset.max);
+    const dec = parseInt(row.dataset.decimals || '0', 10);
+    const bar = row.querySelector('.bar');
+    const fill = row.querySelector('.fill');
+    const valEl = row.querySelector('.value');
+    let value = parseFloat(row.dataset.value);
+
+    function render() {
+      const a = (value - min) / (max - min);
+      fill.style.width = (a * 100) + '%';
+      valEl.textContent = value.toFixed(dec);
+    }
+    function setFromEvent(e) {
+      const r = bar.getBoundingClientRect();
+      const a = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+      value = min + (max - min) * a;
+      const m = Math.pow(10, dec);
+      value = Math.round(value * m) / m;
+      render();
+    }
+    let dragging = false;
+    bar.addEventListener('pointerdown', e => { dragging = true; bar.setPointerCapture(e.pointerId); setFromEvent(e); });
+    bar.addEventListener('pointermove', e => { if (dragging) setFromEvent(e); });
+    bar.addEventListener('pointerup', () => { dragging = false; });
+    render();
+  });
+
+  // search
+  const searchEl = document.getElementById('search');
+  function filter() {
+    const q = searchEl.value.toLowerCase();
+    const active = document.querySelector('.pane.active');
+    if (!active) return;
+    active.querySelectorAll('.row, .action').forEach(el => {
+      const text = (el.textContent || '').toLowerCase();
+      el.style.display = (q === '' || text.includes(q)) ? '' : 'none';
+    });
+  }
+  searchEl.addEventListener('input', filter);
+
+  // close button (visuel)
+  document.getElementById('close').addEventListener('click', () => {
+    const m = document.getElementById('menu');
+    m.style.transition = 'opacity .15s, transform .15s';
+    m.style.opacity = '0';
+    m.style.transform = 'scale(.98)';
+    setTimeout(() => {
+      m.style.opacity = '1';
+      m.style.transform = 'none';
+    }, 350);
+  });
+</script>
+</body>
+</html>

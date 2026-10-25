@@ -1,0 +1,12 @@
+# executor / editor noise
+.vscode/
+.idea/
+*.code-workspace
+
+# generated config dumps
+GOOOD_jailbird.json
+*.log
+
+# windows
+Thumbs.db
+desktop.ini
